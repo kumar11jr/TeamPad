@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "795920019574",
+    "project_id": "teampad-4609e",
+    "storage_bucket": "teampad-4609e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795920019574:android:5a912b63a9f84941f7ef57",
+        "android_client_info": {
+          "package_name": "com.teampad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795920019574-tv7gij2795qjnd87m6p6qua7do6sit28.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP-np6WHkBckYbg661MMXuD2dVJR44eGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795920019574-tv7gij2795qjnd87m6p6qua7do6sit28.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
