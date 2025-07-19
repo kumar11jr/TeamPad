@@ -1,35 +1,43 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  ScrollView,
   StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  ScrollView,
 } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig.js";
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignUp = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("User created:", userCredential.user);
-      Alert.alert("Success", "Account created successfully!");
+      setSuccessMessage("Account created successfully!");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+      setEmail("");
+      setPassword("");
     } catch (error) {
       if (error instanceof Error) {
         console.error("Signup error:", error.message);
-        Alert.alert("Error", error.message);
+        setErrorMessage(error.message);
       } else {
         console.error("Signup error:", error);
-        Alert.alert("Error", "An unknown error occurred.");
+        setErrorMessage("An unknown error occurred.");
       }
     }
   };
@@ -54,6 +62,15 @@ export default function SignUpScreen() {
 
             {/* Card */}
             <View className="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-200">
+              {/* Success Message */}
+              {successMessage ? ( 
+                <Text className="text-sm text-green-500 mb-4">{successMessage}</Text>
+              ) : null}
+
+              {/* Error Message */}
+              {errorMessage ? (
+                <Text className="text-sm text-red-500 mb-4">{errorMessage}</Text>
+              ) : null}
               {/* Email */}
               <Text className="text-sm text-gray-700 mb-1">Email</Text>
               <TextInput
