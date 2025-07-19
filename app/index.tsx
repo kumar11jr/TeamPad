@@ -1,7 +1,17 @@
-import React, { useState } from "react";
-import { Text, TextInput, Button, View, StyleSheet, Alert } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./../firebaseConfig.js"; // update path as needed
+import React, { useState } from "react";
+import {
+  Alert,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { auth } from "./../firebaseConfig.js";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -15,51 +25,109 @@ export default function Index() {
         Alert.alert("Success", "User account created!");
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Error creating user:", errorCode, errorMessage);
-        Alert.alert("Error", errorMessage);
+        console.error("Error creating user:", error.code, error.message);
+        Alert.alert("Error", error.message);
       });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Email:</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        placeholder="Enter your email"
-      />
-      <Text style={styles.label}>Password:</Text>
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        placeholder="Enter your password"
-      />
-      <Button title="Sign Up" onPress={handleSignUp} />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
+      <View style={styles.container}>
+        <Text style={styles.title}>Create Account</Text>
+
+        <View style={styles.card}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholder="example@email.com"
+            placeholderTextColor="#aaa"
+          />
+
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholder="••••••••"
+            placeholderTextColor="#aaa"
+          />
+
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    justifyContent: "center",
+  safeArea: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
-  input: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 10,
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#333",
+    marginBottom: 24,
+    textAlign: "center",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+      },
+    }),
   },
   label: {
-    marginBottom: 4,
+    fontSize: 16,
+    color: "#444",
+    marginBottom: 6,
+    marginTop: 12,
+  },
+  input: {
+    height: 48,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#fff",
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: "#4a90e2",
+    paddingVertical: 14,
+    borderRadius: 8,
+    marginTop: 24,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
   },
 });
