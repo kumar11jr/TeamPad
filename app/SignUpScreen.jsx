@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-// Assuming auth and createUserWithEmailAndPassword are imported from your firebaseConfig
-import { auth } from "../firebaseConfig"; // Uncomment and adjust path if needed
-import { createUserWithEmailAndPassword } from "firebase/auth"; // Uncomment if using Firebase
 import {router} from 'expo-router'
 
 export default function SignUpScreen({ onNavigateToSignIn }) {
