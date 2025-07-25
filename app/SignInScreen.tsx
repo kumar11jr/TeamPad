@@ -1,9 +1,9 @@
+/* eslint-disable react/no-unknown-property */
+import { router } from "expo-router";
 import React, { useState, useEffect, useRef } from "react";
 // Assuming auth and signInWithEmailAndPassword are imported from your firebaseConfig
-import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
-export default function SignInScreen({ onNavigateToSignUp }) {
+export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,30 +21,32 @@ export default function SignInScreen({ onNavigateToSignUp }) {
     setTimeout(() => setIsVisible(true), 100);
   }, []);
 
+  const handleClick = () =>{
+    router.push('/SignUpScreen'); // Navigate to SignUpScreen
+  }
+
+
   const handleSignIn = async () => {
     setErrorMessage("");
     setSuccessMessage("");
     setIsLoading(true);
 
     try {
-      // Replace with actual Firebase sign-in logic
-      // const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // console.log("User signed in:", userCredential.user);
       console.log("Simulating sign-in for:", email);
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
       setSuccessMessage("👋 Welcome back! Signed in successfully!");
       setTimeout(() => setSuccessMessage(""), 4000);
       setEmail("");
       setPassword("");
-    } catch (error) {
-      console.error("Sign-in error:", error.message);
-      setErrorMessage("⚠️ " + error.message);
+    } catch (error:unknown) {
+      console.error("Sign-in error:", (error as Error).message);
+      setErrorMessage("⚠️ " + (error as Error).message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     handleSignIn();
   };
@@ -242,10 +244,10 @@ export default function SignInScreen({ onNavigateToSignUp }) {
         <div className="text-center mt-8">
           <button
             type="button"
-            onClick={onNavigateToSignUp}
+            onClick={handleClick}
             className="bg-white/10 border border-white/20 rounded-full px-6 py-3 text-white/90 text-base hover:bg-white/15 transition-all duration-300"
           >
-            Don't have an account?
+            Don&apos;t have an account?
             <span className="font-bold text-white ml-1">Sign Up</span>
           </button>
         </div>

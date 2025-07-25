@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 // Assuming auth and createUserWithEmailAndPassword are imported from your firebaseConfig
 import { auth } from "../firebaseConfig"; // Uncomment and adjust path if needed
 import { createUserWithEmailAndPassword } from "firebase/auth"; // Uncomment if using Firebase
+import {router} from 'expo-router'
 
 export default function SignUpScreen({ onNavigateToSignIn }) {
   const [email, setEmail] = useState("");
@@ -15,6 +16,10 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
   const titleRef = useRef(null);
+
+  const handleClick=()=>{
+    router.push("/SignInScreen")
+  }
 
   useEffect(() => {
     // Trigger entrance animations
@@ -243,7 +248,7 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
         <div className="text-center mt-8">
           <button
             type="button"
-            onClick={onNavigateToSignIn}
+            onClick={handleClick}
             className="bg-white/10 border border-white/20 rounded-full px-6 py-3 text-white/90 text-base hover:bg-white/15 transition-all duration-300"
           >
             Already have an account?
