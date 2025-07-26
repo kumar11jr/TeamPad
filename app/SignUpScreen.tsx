@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import {router} from 'expo-router'
+import { router } from 'expo-router';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useEffect, useRef, useState } from "react";
+import {auth} from "../firebaseConfig.js"
 
-export default function SignUpScreen({ onNavigateToSignIn }) {
+export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -9,38 +11,48 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Animation states
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
   const titleRef = useRef(null);
 
-  const handleClick=()=>{
-    router.push("/SignInScreen")
-  }
+  const handleClick = () => {
+    router.push("/SignInScreen");
+  };
 
   useEffect(() => {
-    // Trigger entrance animations
     setTimeout(() => setIsVisible(true), 100);
   }, []);
 
   const handleSignUp = async () => {
+    if (isLoading) return;
     setErrorMessage("");
     setSuccessMessage("");
     setIsLoading(true);
 
     try {
-      // Replace with actual Firebase sign-up logic
-      // const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // console.log("User created:", userCredential.user);
-      console.log("Simulating sign-up for:", email);
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+      if (!email || !password) {
+        throw new Error("Please fill in all fields.");
+      }
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters long.");
+      }
+      
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      console.log("User created:", userCredential.user);
+
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate delay
       setSuccessMessage("🎉 Welcome to TeamPad! Account created successfully!");
-      setTimeout(() => setSuccessMessage(""), 4000);
       setEmail("");
       setPassword("");
-    } catch (error) {
-      console.error("Signup error:", error.message);
-      setErrorMessage("⚠️ " + error.message);
+
+      setTimeout(() => {
+        setSuccessMessage("");
+        router.push("/");
+      }, 3000);
+    } catch (error: unknown) {
+      console.error("Signup error:", (error as Error).message);
+      setErrorMessage("⚠️ " + (error as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -80,14 +92,13 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
       </div>
 
       <div className="w-full max-w-md mx-auto p-6 relative z-10">
-        {/* Animated Header */}
+        {/* Header Animation */}
         <div
           ref={titleRef}
           className={`text-center mb-8 transition-all duration-800 ${
             isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0'
           }`}
         >
-          {/* Logo Animation Placeholder */}
           <div className="relative mb-6">
             <div className="w-32 h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
               <div className="text-6xl">🚀</div>
@@ -95,17 +106,13 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
             <div className="absolute inset-0 bg-white/10 rounded-full blur-xl scale-75" />
           </div>
 
-          <h1 className="text-6xl font-black text-white tracking-tight mb-4">
-            TeamPad
-          </h1>
+          <h1 className="text-6xl font-black text-white tracking-tight mb-4">TeamPad</h1>
           <div className="inline-block bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full border border-white/30">
-            <p className="text-white/90 text-lg font-medium">
-              Join the future of collaboration
-            </p>
+            <p className="text-white/90 text-lg font-medium">Join the future of collaboration</p>
           </div>
         </div>
 
-        {/* Glassmorphism Sign Up Card */}
+        {/* Sign Up Card */}
         <div
           ref={cardRef}
           className={`backdrop-blur-xl bg-white/10 rounded-3xl p-8 border border-white/20 shadow-2xl transition-all duration-1000 ${
@@ -114,42 +121,34 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
         >
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {/* Messages */}
+            {/* Success & Error Messages */}
             {successMessage && (
               <div className="bg-green-500/20 border border-green-400/30 rounded-2xl p-4 animate-pulse">
-                <p className="text-green-100 text-center font-medium">
-                  {successMessage}
-                </p>
+                <p className="text-green-100 text-center font-medium">{successMessage}</p>
               </div>
             )}
-
             {errorMessage && (
               <div className="bg-red-500/20 border border-red-400/30 rounded-2xl p-4 animate-pulse">
-                <p className="text-red-100 text-center font-medium">
-                  {errorMessage}
-                </p>
+                <p className="text-red-100 text-center font-medium">{errorMessage}</p>
               </div>
             )}
 
-            {/* Email Input */}
+            {/* Email */}
             <div>
               <label className="block text-white/80 text-sm font-medium mb-2 ml-1">
                 Email Address
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required={true}
-                  className="w-full h-14 px-6 bg-white/10 border border-white/20 rounded-2xl text-white text-base placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
-                />
-                <div className="absolute left-4 top-5 w-2 h-2 bg-blue-400 rounded-full" />
-              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="w-full h-14 px-6 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+              />
             </div>
 
-            {/* Password Input */}
+            {/* Password */}
             <div>
               <label className="block text-white/80 text-sm font-medium mb-2 ml-1">
                 Password
@@ -160,11 +159,10 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a strong password"
-                  required={true}
-                  minLength="6"
-                  className="w-full h-14 px-6 pr-14 bg-white/10 border border-white/20 rounded-2xl text-white text-base placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+                  required
+                  minLength={6}
+                  className="w-full h-14 px-6 pr-14 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
                 />
-                <div className="absolute left-4 top-5 w-2 h-2 bg-purple-400 rounded-full" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -196,7 +194,7 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
               </div>
             </div>
 
-            {/* Sign Up Button */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -223,7 +221,7 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
               <div className="flex-1 h-px bg-white/20" />
             </div>
 
-            {/* Social Sign Up Options */}
+            {/* Social Buttons */}
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
@@ -241,7 +239,7 @@ export default function SignUpScreen({ onNavigateToSignIn }) {
           </form>
         </div>
 
-        {/* Login Link */}
+        {/* Navigation Link */}
         <div className="text-center mt-8">
           <button
             type="button"

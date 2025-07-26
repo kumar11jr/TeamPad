@@ -1,7 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 import { router } from "expo-router";
 import React, { useState, useEffect, useRef } from "react";
-// Assuming auth and signInWithEmailAndPassword are imported from your firebaseConfig
+import { signInWithEmailAndPassword } from "firebase/auth";
+import {auth} from "../firebaseConfig.js"; // Adjust the import path as necessary
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ export default function SignInScreen() {
   }, []);
 
   const handleClick = () =>{
-    router.push('/SignUpScreen'); // Navigate to SignUpScreen
+    router.push("/SignUpScreen"); // Navigate to SignUpScreen
   }
 
 
@@ -32,12 +33,23 @@ export default function SignInScreen() {
     setIsLoading(true);
 
     try {
+      if (!email || !password) {
+        throw new Error("Email and password are required.");
+      }
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters long.");
+      }
+      const user = await signInWithEmailAndPassword(auth, email, password);
+
       console.log("Simulating sign-in for:", email);
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
       setSuccessMessage("👋 Welcome back! Signed in successfully!");
+      console.log("User signed in:", user.user.email);
+      // Clear messages after a delay
       setTimeout(() => setSuccessMessage(""), 4000);
       setEmail("");
       setPassword("");
+      return router.push("/"); // Navigate to HomeScreen after successful sign-in
     } catch (error:unknown) {
       console.error("Sign-in error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
