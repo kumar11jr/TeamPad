@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { useEffect, useRef, useState } from "react";
 import { auth, googleProvider, githubProvider } from "../firebaseConfig.js"
 
 export default function SignUpScreen() {
+  const [name, setName] = useState(""); // Added name field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,19 +31,29 @@ export default function SignUpScreen() {
     setIsLoading(true);
 
     try {
-      if (!email || !password) {
+      // Validation - now includes name
+      if (!name || !email || !password) {
         throw new Error("Please fill in all fields.");
+      }
+      if (name.trim().length < 2) {
+        throw new Error("Name must be at least 2 characters long.");
       }
       if (password.length < 6) {
         throw new Error("Password must be at least 6 characters long.");
       }
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update the user's profile with their name
+      await updateProfile(userCredential.user, {
+        displayName: name.trim()
+      });
 
       console.log("User created:", userCredential.user);
 
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate delay
-      setSuccessMessage("🎉 Welcome to TeamPad! Account created successfully!");
+      setSuccessMessage(`🎉 Welcome to TeamPad, ${name}! Account created successfully!`);
+      setName(""); // Clear name field
       setEmail("");
       setPassword("");
 
@@ -186,19 +197,41 @@ export default function SignUpScreen() {
               </div>
             )}
 
+            {/* Name Field - NEW */}
+            <div>
+              <label className="block text-white/80 text-sm font-medium mb-2 ml-1">
+                Full Name
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                  required
+                  minLength={2}
+                  className="w-full h-14 px-6 bg-white/10 border border-white/20 rounded-2xl text-white text-base placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+                />
+                <div className="absolute left-4 top-5 w-2 h-2 bg-green-400 rounded-full" />
+              </div>
+            </div>
+
             {/* Email */}
             <div>
               <label className="block text-white/80 text-sm font-medium mb-2 ml-1">
                 Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="w-full h-14 px-6 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full h-14 px-6 bg-white/10 border border-white/20 rounded-2xl text-white text-base placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+                />
+                <div className="absolute left-4 top-5 w-2 h-2 bg-blue-400 rounded-full" />
+              </div>
             </div>
 
             {/* Password */}
@@ -214,8 +247,9 @@ export default function SignUpScreen() {
                   placeholder="Create a strong password"
                   required
                   minLength={6}
-                  className="w-full h-14 px-6 pr-14 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+                  className="w-full h-14 px-6 pr-14 bg-white/10 border border-white/20 rounded-2xl text-white text-base placeholder-white/50 backdrop-blur-xl focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
                 />
+                <div className="absolute left-4 top-5 w-2 h-2 bg-purple-400 rounded-full" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
