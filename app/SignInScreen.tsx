@@ -42,12 +42,12 @@ export default function SignInScreen() {
       console.log("Simulating sign-in for:", email);
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSuccessMessage("👋 Welcome back! Signed in successfully!");
-      console.log("User signed in:", user.user.email);
+      console.log("User signed in:", user.user.displayName || user.user.email);
 
       setTimeout(() => setSuccessMessage(""), 4000);
       setEmail("");
       setPassword("");
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("Sign-in error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
@@ -69,7 +69,7 @@ export default function SignInScreen() {
       setSuccessMessage(`👋 Welcome ${user.displayName}!`);
       setTimeout(() => setSuccessMessage(""), 4000);
 
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("Google Sign-in error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
