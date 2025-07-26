@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
-
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 // import {...} from 'firebase/database';
 // import {...} from 'firebase/firestore';
 // import {...} from 'firebase/functions';
@@ -15,9 +14,7 @@ const messagingSenderId = process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID;
 const appId = process.env.EXPO_PUBLIC_APP_ID;
 const measurementId = process.env.EXPO_PUBLIC_MEASUREMENT_ID;
 
-
 // Initialize Firebase
- 
 const firebaseConfig = {
   apiKey,
   authDomain,
@@ -31,6 +28,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-export { auth };
+
+// Providers
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+// Add scopes for GitHub (optional - for getting user email and profile info)
+githubProvider.addScope('user:email');
+githubProvider.addScope('read:user');
+
+export { auth, googleProvider, githubProvider };
+
 // For more information on how to access Firebase in your project,
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase

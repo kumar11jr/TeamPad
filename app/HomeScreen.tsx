@@ -2,8 +2,14 @@
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/authContext';
 
+type AuthUser = {
+  email: string;
+  // add other properties if needed
+};
+
 export default function HomeScreen() {
-  const { user, loading: authLoading } = useAuth();
+  const auth = useAuth() as { user: AuthUser | null; loading: boolean } | null;
+  const { user, loading: authLoading } = auth ?? { user: null, loading: true };
 
   if (authLoading || !user) {
     return (
