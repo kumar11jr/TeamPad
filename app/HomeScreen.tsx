@@ -1,21 +1,37 @@
-import { signOut } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
-import {auth} from "../firebaseConfig.js"; 
-import { useAuth } from '../context/authContext.js';
 
+// Mock auth context that simulates your actual useAuth hook
+const useAuth = () => {
+  const [authState, setAuthState] = useState<{
+    user: AuthUser | null;
+    loading: boolean;
+  }>({
+    user: null,
+    loading: true
+  });
 
-const handleSignOut = () => {
-    signOut(auth).then(()=>{
-        console.log("User signed out successfully");
-    }).catch((error)=>{
-        console.error("Error signing out:", error);
-    });
-}
+  useEffect(() => {
+    // Simulate authentication check
+    setTimeout(() => {
+      setAuthState({
+        user: { email: 'user@teampad.com' },
+        loading: false
+      });
+    }, 1500);
+  }, []);
+
+  return authState;
+};
+
+type AuthUser = {
+  email: string;
+  // add other properties if needed
+};
 
 const MenuSlider = ({ isOpen, onClose, user }: { 
   isOpen: boolean; 
   onClose: () => void; 
-  user: { email: string; displayName?: string }
+  user: AuthUser;
 }) => {
   const menuItems = [
     { icon: '🏠', title: 'Dashboard', subtitle: 'Overview & Stats' },
@@ -74,7 +90,7 @@ const MenuSlider = ({ isOpen, onClose, user }: {
             </div>
             <h2 className="text-white text-2xl font-bold mb-2">TeamPad</h2>
             <div className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/30">
-              <p className="text-white/90 text-sm font-medium">{user?.displayName}</p>
+              <p className="text-white/90 text-sm font-medium">{user.email}</p>
             </div>
           </div>
 
@@ -113,7 +129,10 @@ const MenuSlider = ({ isOpen, onClose, user }: {
           <div className="p-6 border-t border-white/10">
             <button
               className="w-full bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl py-4 text-white font-semibold hover:bg-white/25 transition-all duration-300 transform hover:scale-105"
-              onClick={handleSignOut}
+              onClick={() => {
+                console.log('Sign out clicked');
+                onClose();
+              }}
             >
               🚪 Sign Out
             </button>
@@ -125,7 +144,9 @@ const MenuSlider = ({ isOpen, onClose, user }: {
 };
 
 export default function HomeScreen() {
-  const { user, loading: authLoading } = useAuth(null)
+  // ALL HOOKS CALLED AT THE TOP - UNCONDITIONALLY
+  const auth = useAuth() as { user: AuthUser | null; loading: boolean } | null;
+  const { user, loading: authLoading } = auth ?? { user: null, loading: true };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Prevent body scroll when menu is open
@@ -227,7 +248,7 @@ export default function HomeScreen() {
           <div className="backdrop-blur-xl bg-white/10 rounded-3xl p-8 border border-white/20 shadow-2xl text-center max-w-md w-full">
             <div className="text-4xl mb-6">👋</div>
             <h2 className="text-white text-3xl font-bold mb-4">
-              Welcome to TeamPad, {user.displayName}
+              Welcome to TeamPad, {user.email}
             </h2>
             
             <div className="grid grid-cols-2 gap-4 mt-8">
