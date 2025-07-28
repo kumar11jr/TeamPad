@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { useEffect, useRef, useState } from "react";
-import { auth, googleProvider, githubProvider } from "../firebaseConfig.js"
+import { auth, githubProvider, googleProvider } from "../firebaseConfig.js";
 
 export default function SignUpScreen() {
   const [name, setName] = useState(""); // Added name field
@@ -16,6 +16,8 @@ export default function SignUpScreen() {
   const cardRef = useRef(null);
   const titleRef = useRef(null);
 
+  const ABSTRACT_KEY = process.env.EXPO_PUBLIC_ABSTRACT_API;
+
   const handleClick = () => {
     router.push("/SignInScreen");
   };
@@ -23,6 +25,18 @@ export default function SignUpScreen() {
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
   }, []);
+
+  const checkEmailValidity = async(email:string) =>{
+    try{
+      const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${ABSTRACT_KEY}&email=${email}`);
+      const data = await res.json();
+      return data.deliverability === "DELIVERABLE"
+    }catch(err){
+      console.error("Email validation error:", err);
+      setErrorMessage("⚠️ Unable to validate email. Please try again later.");
+      return false;
+    }
+  }
 
   const handleSignUp = async () => {
     if (isLoading) return;
@@ -40,6 +54,11 @@ export default function SignUpScreen() {
       }
       if (password.length < 6) {
         throw new Error("Password must be at least 6 characters long.");
+      }
+
+      const isValidEmail = await checkEmailValidity(email);
+      if (!isValidEmail) {
+        throw new Error("Invalid email address. Please enter a valid email.");
       }
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -59,7 +78,7 @@ export default function SignUpScreen() {
 
       setTimeout(() => {
         setSuccessMessage("");
-        router.push("/");
+        router.push("/HomeScreen");
       }, 3000);
     } catch (error: unknown) {
       console.error("Signup error:", (error as Error).message);
