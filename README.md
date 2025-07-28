@@ -1,20 +1,35 @@
-# Welcome to your Expo app 👋
+# 🚀 TeamPad – Project Collaboration App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to **TeamPad**, a cross-platform mobile app built with **React Native + Expo** and powered by **Firebase**. TeamPad allows users to create and manage projects, and **invite collaborators by email** to work together seamlessly.
 
-## Get started
+## ⚙️ Tech Stack
 
-1. Install dependencies
+- [Expo](https://expo.dev) – Cross-platform app framework  
+- [React Native](https://reactnative.dev)  
+- [Firebase](https://firebase.google.com): Authentication, Firestore Database, (optional) Cloud Functions  
+- TypeScript (optional)
 
-   ```bash
-   npm install
-   ```
+## 📲 Features
+
+- 🔐 User Authentication (Firebase Auth)  
+- 📁 Project Creation and Management  
+- ✉️ Email-based Invitations to Collaborate  
+- 👥 Invite Acceptance Flow with Automatic Project Linking  
+- ✅ Firestore Rules for Secure Data Access
+
+## 🚀 Get Started
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
 
 2. Start the app
 
-   ```bash
-   npx expo start
-   ```
+```bash
+npx expo start
+```
 
 In the output, you'll find options to open the app in a
 
