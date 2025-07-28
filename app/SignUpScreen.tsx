@@ -101,7 +101,7 @@ export default function SignUpScreen() {
       setSuccessMessage(`🎉 Welcome to TeamPad, ${user.displayName}!`);
       setTimeout(() => setSuccessMessage(""), 4000);
 
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("Google Sign-up error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
@@ -123,7 +123,7 @@ export default function SignUpScreen() {
       setSuccessMessage(`🎉 Welcome to TeamPad, ${user.displayName || user.email}!`);
       setTimeout(() => setSuccessMessage(""), 4000);
 
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("GitHub Sign-up error:", (error as Error).message);
       let errorMsg = (error as Error).message;

@@ -47,7 +47,7 @@ export default function SignInScreen() {
       setTimeout(() => setSuccessMessage(""), 4000);
       setEmail("");
       setPassword("");
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("Sign-in error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
@@ -69,7 +69,7 @@ export default function SignInScreen() {
       setSuccessMessage(`👋 Welcome ${user.displayName}!`);
       setTimeout(() => setSuccessMessage(""), 4000);
 
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("Google Sign-in error:", (error as Error).message);
       setErrorMessage("⚠️ " + (error as Error).message);
@@ -91,7 +91,7 @@ export default function SignInScreen() {
       setSuccessMessage(`👋 Welcome ${user.displayName || user.email}!`);
       setTimeout(() => setSuccessMessage(""), 4000);
 
-      return router.push("/");
+      return router.push("/HomeScreen");
     } catch (error: unknown) {
       console.error("GitHub Sign-in error:", (error as Error).message);
       let errorMsg = (error as Error).message;
